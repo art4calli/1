@@ -6,9 +6,9 @@
   <title>Embed App</title>
   <link rel="icon" type="image/png" href="https://www.i-pic.info/i/yoIO1162734.png">
   <style>
-    html,body { height:100%; margin:0; font-family:sans-serif; text-align:center; }
+    html,body { height:100%; margin:0; font-family:sans-serif; text-align:center; background:#f9f9f9; }
     .frame-wrap { width:100%; height:100vh; border:0; }
-    #openBrowser {
+    #openMsg {
       display:none;
       position:fixed;
       top:40%;
@@ -16,42 +16,65 @@
       transform:translate(-50%, -50%);
       background:#4CAF50;
       color:white;
-      padding:15px 25px;
-      border-radius:10px;
+      padding:20px;
+      border-radius:15px;
       font-size:18px;
-      text-decoration:none;
       box-shadow:0 4px 10px rgba(0,0,0,0.2);
+      width:80%;
+      max-width:350px;
+    }
+    #openMsg button {
+      margin-top:15px;
+      background:white;
+      color:#4CAF50;
+      border:none;
+      border-radius:8px;
+      padding:10px 20px;
+      font-size:16px;
+      cursor:pointer;
     }
   </style>
 </head>
 <body>
 
-  <a id="openBrowser" href="">🌐 افتح الصفحة في المتصفح الخارجي</a>
+  <div id="openMsg">
+    🌐 هذه الصفحة لا تعمل بشكل جيد داخل تطبيق LINE.<br>
+    اضغط الزر أدناه لفتحها في المتصفح الخارجي 👇
+    <br>
+    <button id="openBtn">افتح الصفحة في المتصفح</button>
+    <br>
+    <small id="copyHint" style="display:none;color:#eee;">تم نسخ الرابط، الصقه في المتصفح 👍</small>
+  </div>
 
-  <iframe class="frame-wrap" src="https://script.google.com/macros/s/AKfycbzxmCyuku2ATQve0te3RswCmHa8BsTi6ffB5JwMMyWVgF-c-OWQFJ6yHqobnJnRd5fydQ/exec?page=Register1file"
-          frameborder="0" allowfullscreen>
+  <iframe class="frame-wrap"
+    src="https://script.google.com/macros/s/AKfycbzxmCyuku2ATQve0te3RswCmHa8BsTi6ffB5JwMMyWVgF-c-OWQFJ6yHqobnJnRd5fydQ/exec?page=Register1file"
+    frameborder="0" allowfullscreen>
   </iframe>
 
   <script>
     const isLine = navigator.userAgent.toLowerCase().includes('line');
+    const url = window.location.href;
+
     if (isLine) {
-      const btn = document.getElementById('openBrowser');
-      btn.style.display = 'inline-block';
-
-      // إعداد الرابط العادي لفتح المتصفح الخارجي
-      const url = window.location.href;
-
-      // لأجهزة Android
-      if (/android/i.test(navigator.userAgent)) {
-        btn.href = `intent://${url.replace(/^https?:\/\//, '')}#Intent;action=android.intent.action.VIEW;end`;
-      } 
-      // لأجهزة iPhone أو iPad
-      else if (/iphone|ipad|ipod/i.test(navigator.userAgent)) {
-        btn.href = url;
-      }
-
-      // إخفاء الإطار الداخلي لأن LINE لا يدعم العرض الجيد
       document.querySelector('.frame-wrap').style.display = 'none';
+      const msg = document.getElementById('openMsg');
+      msg.style.display = 'block';
+
+      document.getElementById('openBtn').onclick = () => {
+        try {
+          // محاولة فتح الرابط بالطريقة العادية أولاً
+          window.location.href = url;
+          // محاولة إضافية بعد قليل
+          setTimeout(() => {
+            window.open(url, '_blank');
+          }, 700);
+        } catch (e) {
+          // إذا فشل، انسخ الرابط للمستخدم
+          navigator.clipboard.writeText(url).then(() => {
+            document.getElementById('copyHint').style.display = 'block';
+          });
+        }
+      };
     }
   </script>
 </body>
