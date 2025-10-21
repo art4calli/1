@@ -6,14 +6,47 @@
   <title>Embed App</title>
   <link rel="icon" type="image/png" href="https://www.i-pic.info/i/yoIO1162734.png">
   <style>
-    html,body { height:100%; margin:0; }
+    html,body { height:100%; margin:0; font-family:sans-serif; text-align:center; }
     .frame-wrap { width:100%; height:100vh; border:0; }
+    #openChrome {
+      display:none;
+      position:fixed;
+      top:40%;
+      left:50%;
+      transform:translate(-50%, -50%);
+      background:#4285F4;
+      color:white;
+      padding:15px 25px;
+      border-radius:10px;
+      font-size:18px;
+      text-decoration:none;
+      box-shadow:0 4px 10px rgba(0,0,0,0.2);
+    }
   </style>
 </head>
 <body>
-  <!-- غيّر URL هنا إلى رابط الويب آب الذي حصلت عليه من Apps Script -->
+
+  <a id="openChrome" href="">🔗 افتح الصفحة في متصفح Chrome</a>
+
   <iframe class="frame-wrap" src="https://script.google.com/macros/s/AKfycbzxmCyuku2ATQve0te3RswCmHa8BsTi6ffB5JwMMyWVgF-c-OWQFJ6yHqobnJnRd5fydQ/exec?page=Register1file"
           frameborder="0" allowfullscreen>
   </iframe>
+
+  <script>
+    // اكتشاف إذا المستخدم داخل تطبيق LINE
+    const isLine = navigator.userAgent.toLowerCase().includes('line');
+    if (isLine) {
+      // عرض زر الفتح في Chrome
+      const btn = document.getElementById('openChrome');
+      btn.style.display = 'inline-block';
+
+      // إعداد رابط خاص ليفتح Chrome مباشرة على Android
+      const url = window.location.href;
+      btn.href = `intent://${url.replace(/^https?:\/\//, '')}#Intent;package=com.android.chrome;end`;
+
+      // إخفاء iframe لأن LINE لا يدعم العرض الجيد
+      document.querySelector('.frame-wrap').style.display = 'none';
+    }
+  </script>
 </body>
 </html>
