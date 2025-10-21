@@ -8,13 +8,13 @@
   <style>
     html,body { height:100%; margin:0; font-family:sans-serif; text-align:center; }
     .frame-wrap { width:100%; height:100vh; border:0; }
-    #openChrome {
+    #openBrowser {
       display:none;
       position:fixed;
       top:40%;
       left:50%;
       transform:translate(-50%, -50%);
-      background:#4285F4;
+      background:#4CAF50;
       color:white;
       padding:15px 25px;
       border-radius:10px;
@@ -26,25 +26,31 @@
 </head>
 <body>
 
-  <a id="openChrome" href="">🔗 افتح الصفحة في متصفح Chrome</a>
+  <a id="openBrowser" href="">🌐 افتح الصفحة في المتصفح الخارجي</a>
 
   <iframe class="frame-wrap" src="https://script.google.com/macros/s/AKfycbzxmCyuku2ATQve0te3RswCmHa8BsTi6ffB5JwMMyWVgF-c-OWQFJ6yHqobnJnRd5fydQ/exec?page=Register1file"
           frameborder="0" allowfullscreen>
   </iframe>
 
   <script>
-    // اكتشاف إذا المستخدم داخل تطبيق LINE
     const isLine = navigator.userAgent.toLowerCase().includes('line');
     if (isLine) {
-      // عرض زر الفتح في Chrome
-      const btn = document.getElementById('openChrome');
+      const btn = document.getElementById('openBrowser');
       btn.style.display = 'inline-block';
 
-      // إعداد رابط خاص ليفتح Chrome مباشرة على Android
+      // إعداد الرابط العادي لفتح المتصفح الخارجي
       const url = window.location.href;
-      btn.href = `intent://${url.replace(/^https?:\/\//, '')}#Intent;package=com.android.chrome;end`;
 
-      // إخفاء iframe لأن LINE لا يدعم العرض الجيد
+      // لأجهزة Android
+      if (/android/i.test(navigator.userAgent)) {
+        btn.href = `intent://${url.replace(/^https?:\/\//, '')}#Intent;action=android.intent.action.VIEW;end`;
+      } 
+      // لأجهزة iPhone أو iPad
+      else if (/iphone|ipad|ipod/i.test(navigator.userAgent)) {
+        btn.href = url;
+      }
+
+      // إخفاء الإطار الداخلي لأن LINE لا يدعم العرض الجيد
       document.querySelector('.frame-wrap').style.display = 'none';
     }
   </script>
